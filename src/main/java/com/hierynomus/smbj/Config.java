@@ -69,6 +69,7 @@ public final class Config {
         this();
         dialects.addAll(other.dialects);
         authenticators.addAll(other.authenticators);
+        socketFactory = other.socketFactory;
         random = other.random;
         clientGuid = other.clientGuid;
         signingRequired = other.signingRequired;
