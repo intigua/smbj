@@ -30,6 +30,10 @@ public class ProxySocketFactory extends SocketFactory {
 
     private Proxy proxy;
     private int connectTimeout;
+    private Integer soTimeout;
+    private Boolean keepAlive;
+    private Boolean soLingerOn;
+    private int soLingerTimeout;
 
     public ProxySocketFactory() {
         this(Proxy.NO_PROXY, DEFAULT_CONNECT_TIMEOUT);
@@ -79,10 +83,33 @@ public class ProxySocketFactory extends SocketFactory {
         }
         logger.info("Connecting to {}", address);
         socket.connect(address, connectTimeout);
+        if (soTimeout != null) {
+            socket.setSoTimeout(soTimeout);
+        }
+        if (keepAlive != null) {
+            socket.setKeepAlive(keepAlive);
+        }
+        if (soLingerOn != null) {
+            socket.setSoLinger(soLingerOn, soLingerTimeout);
+        }
         return socket;
     }
 
     private static Proxy getHttpProxy(String proxyAddress, int proxyPort) {
         return new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyAddress, proxyPort));
     }
+
+    public void setKeepAlive(Boolean keepAlive) {
+        this.keepAlive = keepAlive;
+    }
+
+    public void setSoTimeout(Integer soTimeout) {
+        this.soTimeout = soTimeout;
+    }
+
+    public void setSoLinger(Boolean on, int timeout) {
+        this.soLingerOn = on;
+        this.soLingerTimeout = timeout;
+    }
+
 }

@@ -32,11 +32,12 @@ public abstract class SocketClient {
     private InputStream input;
     private OutputStream output;
 
-    private SocketFactory socketFactory = new ProxySocketFactory();
+    private SocketFactory socketFactory;
 
     private int soTimeout = 0;
 
-    public SocketClient(int defaultPort) {
+    public SocketClient(SocketFactory socketFactory, int defaultPort) {
+        this.socketFactory = socketFactory;
         this.defaultPort = defaultPort;
     }
 

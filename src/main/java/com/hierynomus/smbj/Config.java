@@ -17,6 +17,7 @@ package com.hierynomus.smbj;
 
 import com.hierynomus.mssmb2.SMB2Dialect;
 import com.hierynomus.protocol.commons.Factory;
+import com.hierynomus.protocol.commons.socket.ProxySocketFactory;
 import com.hierynomus.security.SecurityProvider;
 import com.hierynomus.security.jce.JceSecurityProvider;
 import com.hierynomus.smbj.auth.Authenticator;
@@ -25,6 +26,8 @@ import com.hierynomus.smbj.auth.SpnegoAuthenticator;
 
 import java.security.SecureRandom;
 import java.util.*;
+
+import javax.net.SocketFactory;
 
 public final class Config {
     private static final int DEFAULT_BUFFER_SIZE = 1024 * 1024;
@@ -35,6 +38,7 @@ public final class Config {
     private UUID clientGuid;
     private boolean signingRequired;
     private SecurityProvider securityProvider;
+    private SocketFactory socketFactory;
     private int readBufferSize;
     private int writeBufferSize;
     private int transactBufferSize;
@@ -51,6 +55,7 @@ public final class Config {
             .withSigningRequired(false)
             .withBufferSize(DEFAULT_BUFFER_SIZE)
             .withDialects(SMB2Dialect.SMB_2_1, SMB2Dialect.SMB_2_0_2)
+            .withSocketFactory(new ProxySocketFactory())
             // order is important.  The authenticators listed first will be selected
             .withAuthenticators(new SpnegoAuthenticator.Factory(), new NtlmAuthenticator.Factory());
     }
@@ -77,8 +82,12 @@ public final class Config {
         return random;
     }
 
-    public SecurityProvider getSecurityProvider() {
+	public SecurityProvider getSecurityProvider() {
         return securityProvider;
+    }
+
+    public SocketFactory getSocketFactory() {
+        return socketFactory;
     }
 
     public Set<SMB2Dialect> getSupportedDialects() {
@@ -148,6 +157,14 @@ public final class Config {
                 }
                 config.dialects.add(dialect);
             }
+            return this;
+        }
+
+        public Builder withSocketFactory(SocketFactory socketFactory) {
+            if (socketFactory == null) {
+                throw new IllegalArgumentException("Socket factory may not be null");
+            }
+            config.socketFactory = socketFactory;
             return this;
         }
 

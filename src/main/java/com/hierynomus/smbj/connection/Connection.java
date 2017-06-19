@@ -78,7 +78,7 @@ public class Connection extends SocketClient implements AutoCloseable, PacketRec
     }
 
     private Connection(Config config, TransportLayer<SMB2Packet> transport, SMBEventBus bus) {
-        super(transport.getDefaultPort());
+        super(config.getSocketFactory(), transport.getDefaultPort());
         this.config = config;
         this.transport = transport;
         this.bus = bus;
