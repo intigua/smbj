@@ -78,11 +78,6 @@ public class ProxySocketFactory extends SocketFactory {
 
     private Socket createSocket(InetSocketAddress address, InetSocketAddress bindAddress) throws IOException {
         Socket socket = new Socket(proxy);
-        if (bindAddress != null) {
-            socket.bind(bindAddress);
-        }
-        logger.info("Connecting to {}", address);
-        socket.connect(address, connectTimeout);
         if (soTimeout != null) {
             socket.setSoTimeout(soTimeout);
         }
@@ -92,6 +87,11 @@ public class ProxySocketFactory extends SocketFactory {
         if (soLingerOn != null) {
             socket.setSoLinger(soLingerOn, soLingerTimeout);
         }
+        if (bindAddress != null) {
+            socket.bind(bindAddress);
+        }
+        logger.info("Connecting to {}", address);
+        socket.connect(address, connectTimeout);
         return socket;
     }
 
